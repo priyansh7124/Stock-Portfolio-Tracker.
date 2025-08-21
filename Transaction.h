@@ -30,5 +30,11 @@ public:
     double getPricePerShare() const { return price_per_share; }
     double getTotalValue() const { return total_value; }
     std::chrono::system_clock::time_point getTimestamp() const { return timestamp; }
+      // Utility
+    void displayTransaction() const;
+    std::string getTypeString() const;
+    // For sorting transactions by date
+    bool operator<(const Transaction& other) const;
+    bool operator>(const Transaction& other) const;
 };
 #endif
