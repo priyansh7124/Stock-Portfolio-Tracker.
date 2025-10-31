@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Portfolio Tracker - DSA Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .card h3 {
+            color: #5a67d8;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .portfolio-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .performance {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .positive { color: #38a169; }
+        .negative { color: #e53e3e; }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: #5a67d8;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(90, 103, 216, 0.4);
+        }
+
+        .btn-success { background: #38a169; }
+        .btn-danger { background: #e53e3e; }
+        .btn-info { background: #3182ce; }
+
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stock-item {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .stock-item:hover {
+            transform: scale(1.02);
+        }
+
+        .stock-info h4 {
+            margin-bottom: 5px;
+            color: #2d3748;
+        }
+
+        .stock-price {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .dsa-demo {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .complexity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .complexity-table th,
+        .complexity-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .complexity-table th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #5a67d8;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Stock Portfolio Tracker</h1>
+            <p>Advanced Data Structures & Algorithms Demonstration</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h3>💰 Portfolio Value</h3>
+                <div class="portfolio-value" id="portfolioValue">$10,000.00</div>
+                <div class="performance" id="performance">
+                    <span class="positive">+0.00% Today</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📊 Holdings</h3>
+                <div style="font-size: 1.5rem; margin-bottom: 10px;" id="holdingsCount">0 Stocks</div>
+                <div style="color: #718096;">Cash: <span id="cashBalance">$10,000.00</span></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-success" onclick="showBuyModal()">🛒 Buy Stock</button>
+            <button class="btn btn-danger" onclick="showSellModal()">💰 Sell Stock</button>
+            <button class="btn btn-info" onclick="simulateMarket()">📈 Simulate Market</button>
+            <button class="btn" onclick="showDSADemo()">🔢 DSA Demo</button>
+            <button class="btn" onclick="searchStock()">🔍 Search Stock</button>
+        </div>
+
+        <div class="stock-grid" id="stockGrid">
+            <!-- Stocks will be populated here -->
+        </div>
+
+        <div class="dsa-demo" id="dsaDemo" style="display: none;">
+            <h3>🔢 Data Structures & Algorithms Analysis</h3>
+            <p>This application demonstrates practical implementation of various DSA concepts:</p>
+            
+            <table class="complexity-table">
+                <thead>
+                    <tr>
+                        <th>Operation</th>
+                        <th>Data Structure</th>
+                        <th>Time Complexity</th>
+                        <th>Implementation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Stock Lookup</td>
+                        <td>Hash Map</td>
+                        <td>O(1)</td>
+                        <td>JavaScript Map/Object</td>
+                    </tr>
+                    <tr>
+                        <td>Top Performers</td>
+                        <td>Heap/Sorting</td>
+                        <td>O(n log n)</td>
+                        <td>Array.sort() with custom comparator</td>
+                    </tr>
+                    <tr>
+                        <td>Price History</td>
+                        <td>Dynamic Array</td>
+                        <td>O(1) append</td>
+                        <td>JavaScript Array</td>
+                    </tr>
+                    <tr>
+                        <td>Portfolio Search</td>
+                        <td>Linear Search</td>
+                        <td>O(n)</td>
+                        <td>Array.filter()</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Buy Modal -->
+    <div id="buyModal" class="modal">
+        <div class="modal-content">
+            <h3>🛒 Buy Stock</h3>
+            <div class="form-group">
+                <label for="buySymbol">Stock Symbol:</label>
+                <select id="buySymbol">
+                    <option value="AAPL">AAPL - Apple Inc.</option>
+                    <option value="GOOGL">GOOGL - Alphabet Inc.</option>
+                    <option value="MSFT">MSFT - Microsoft Corp.</option>
+                    <option value="TSLA">TSLA - Tesla Inc.</option>
+                    <option value="AMZN">AMZN - Amazon.com Inc.</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="buyQuantity">Quantity:</label>
+                <input type="number" id="buyQuantity" min="1" placeholder="Enter quantity">
+            </div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="buyStock()">Buy Stock</button>
+                <button class="btn" onclick="closeBuyModal()" style="margin-left: 10px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sell Modal -->
+    <div id="sellModal" class="modal">
+        <div class="modal-content">
+            <h3>💰 Sell Stock</h3>
+            <div class="form-group">
+                <label for="sellSymbol">Stock Symbol:</label>
+                <select id="sellSymbol">
+                    <!-- Will be populated with owned stocks -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="sellQuantity">Quantity:</label>
+                <input type="number" id="sellQuantity" min="1" placeholder="Enter quantity">
+            </div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-danger" onclick="sellStock()">Sell Stock</button>
+                <button class="btn" onclick="closeSellModal()" style="margin-left: 10px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="portfolio.js"></script>
+</body>
+</html>

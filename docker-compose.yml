@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  portfolio-tracker:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - ENV=production
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  # Optional: Add a database for persistence
+  database:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: portfolio_tracker
+      POSTGRES_USER: portfolio_user
+      POSTGRES_PASSWORD: secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
