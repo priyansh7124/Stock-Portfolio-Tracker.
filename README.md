@@ -119,11 +119,7 @@ g++ -std=c++17 -Wall -Wextra -O2 -o portfolio_tracker main.cpp Stock.cpp Transac
 Use this to view the JavaScript demo UI in your browser:
 
 ```bash
-<<<<<<< HEAD
-cd "C:cd .\web\"
-=======
 cd .\web\
->>>>>>> 2cec1301877220bf0fe571cc0020df618768f1a2
 npx serve -l 5500
 ```
 
