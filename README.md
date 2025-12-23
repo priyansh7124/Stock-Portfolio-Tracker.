@@ -119,13 +119,14 @@ g++ -std=c++17 -Wall -Wextra -O2 -o portfolio_tracker main.cpp Stock.cpp Transac
 Use this to view the JavaScript demo UI in your browser:
 
 ```bash
-cd "C:\Users\priya\OneDrive\Desktop\New Project\New folder\new\web"
+cd "C:cd .\web\"
 npx serve -l 5500
 ```
 
 Then open: http://localhost:5500
 
 Notes:
+
 - Requires Node.js (npx will prompt to install `serve` the first time).
 - This runs the static web UI in `web/`; it does not execute the C++ CLI.
 
